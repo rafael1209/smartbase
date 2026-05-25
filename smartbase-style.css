@@ -15,8 +15,8 @@ html, body, #root, .App {
   overflow: hidden !important; /* Lock the outer viewport scroll */
 }
 
-/* Universal page scroll container (the direct div inside .App handles scroll and elastic effects) */
-.App > div {
+/* Universal page scroll container (ONLY the first div child inside .App handles scroll) */
+.App > div:first-child {
   height: 100% !important;
   min-height: 100% !important;
   overflow-y: auto !important; 
@@ -87,11 +87,14 @@ html, body, #root, .App {
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
+  height: 72px !important; /* Set proper standard height for the footer tab bar */
+  min-height: 72px !important;
   z-index: 1100 !important;
   background-color: #ffffff !important;
   box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.05) !important;
   border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
   display: flex !important;
+  flex-direction: row !important; /* Ensure tabs are horizontal */
 }
 
 /* Custom Setup / Profile Modal Styling (Premium Glassmorphism & Material look) */

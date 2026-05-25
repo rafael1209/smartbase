@@ -233,8 +233,8 @@ function wrapContentBody() {
 
 // Premium iOS-style elastic rubber-band bounce scroll effect for both desktop & mobile
 function enableIOSRubberBandScroll() {
-    // Select the scroll container universally (.App > div)
-    const scrollContainer = document.querySelector('.App > div') || document.querySelector('.jss17') || document.querySelector('.jss18');
+    // Select the scroll container universally (.App > div:first-child)
+    const scrollContainer = document.querySelector('.App > div:first-child') || document.querySelector('.jss17') || document.querySelector('.jss18');
     if (!scrollContainer) return;
     
     // Target the appropriate body container:
