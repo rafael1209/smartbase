@@ -1,7 +1,7 @@
 /* ==========================================================================
    Smart Base Premium Custom Stylesheet
    Fixes layout clipping, footer pinning, header anchoring, and card stretching
-   ========================================================================== */
+   ========================================================================= */
 
 /* Top-level viewport sizing to prevent double scrollbars and viewport glitches */
 html, body, #root, .App {
@@ -15,11 +15,12 @@ html, body, #root, .App {
   overflow: hidden !important; /* Lock the outer viewport scroll */
 }
 
-/* Universal page scroll container (the only element allowed to scroll if content overflows) */
+/* Universal page scroll container (handles native elastic/bounce scrolling) */
 .jss17, .jss18 {
   height: 100% !important;
   min-height: 100% !important;
   overflow-y: auto !important; 
+  -webkit-overflow-scrolling: touch; /* Enable native elastic scroll physics on iOS */
   background-color: #f4f4f5 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -60,9 +61,15 @@ html, body, #root, .App {
   margin: 0 !important;
 }
 
-/* Add padding ONLY to the index page wrappers to make room for fixed bottom footer tabs (since page 2 has no footer tabs!) */
+/* Add padding ONLY to the index page wrappers to make room for fixed bottom footer tabs */
 .jss23, .jss28, .jss25, .jss43 {
   padding-bottom: 95px !important; /* Perfect gap above fixed tabs */
+  box-sizing: border-box !important;
+}
+
+/* Give a subtle interactive bottom padding to page 2 details page so the user can drag/bounce the page slightly (iOS rubber-band effect) */
+.jss134, .jss139 {
+  padding-bottom: 35px !important;
   box-sizing: border-box !important;
 }
 
