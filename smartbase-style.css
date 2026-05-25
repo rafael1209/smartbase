@@ -45,8 +45,13 @@ html, body {
   margin: 0 !important;
 }
 
-/* Add padding ONLY to the universal page scroll wrapper to make room for fixed bottom footer tabs */
+/* Universal layout wrappers - reset bottom padding to prevent page 2 from scrolling */
 .jss17, .jss18 {
+  padding-bottom: 0 !important;
+}
+
+/* Add padding ONLY to the index page wrappers to make room for fixed bottom footer tabs (since page 2 has no footer tabs!) */
+.jss23, .jss28, .jss25, .jss43 {
   padding-bottom: 95px !important; /* Perfect gap above fixed tabs */
   box-sizing: border-box !important;
 }
