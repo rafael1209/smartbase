@@ -1,9 +1,10 @@
 /* ==========================================================================
    Smart Base Core Logic (smartbase-core.js)
-   Handles state management (LocalStorage), dynamic UI updates, and profile edit modal
+   Handles state management (LocalStorage), dynamic UI updates, profile edit modal,
+   and custom iOS rubber-band elastic scroll bounce effect
    ========================================================================== */
 
-// Helper to format Date string YYYY-MM-DD into DD.MM.YY Hebrew format
+// Helper to format Date YYYY-MM-DD into DD.MM.YY Hebrew format
 function formatDateToHebrew(dateStr) {
     if (!dateStr) return '';
     const parts = dateStr.split('-');
@@ -38,7 +39,7 @@ const MOCK_DATA = {
     referenceNumber: "999999"
 };
 
-// Retrieve data from localStorage or fallback to null (to trigger setup)
+// Retrieve data from localStorage or fallback to null
 function getSavedData() {
     const saved = localStorage.getItem('smartbase_data');
     if (saved) {
@@ -120,7 +121,6 @@ function openModal(data) {
     const modal = document.getElementById('sb-modal');
     if (!modal) return;
     
-    // Pre-populate fields
     const currentData = data || DEFAULT_DATA;
     document.getElementById('input-visitorName').value = currentData.visitorName || '';
     document.getElementById('input-visitorId').value = currentData.visitorId || '';
@@ -131,7 +131,6 @@ function openModal(data) {
     document.getElementById('input-startDate').value = currentData.startDate || '';
     document.getElementById('input-endDate').value = currentData.endDate || '';
 
-    // Handle close button visibility (hide if first entrance)
     const closeBtn = document.getElementById('sb-modal-close-btn');
     if (!getSavedData()) {
         closeBtn.style.display = 'none';
@@ -157,9 +156,7 @@ function updatePageUI(data) {
     const formattedStart = formatDateToHebrew(data.startDate);
     const formattedEnd = formatDateToHebrew(data.endDate);
 
-    // ==========================================
     // INDEX PAGE POPULATION (index.html)
-    // ==========================================
     const cardTitle = document.getElementById('baseName');
     if (cardTitle) {
         cardTitle.innerHTML = `<text>אישור כניסה ל${data.baseName}</text>`;
@@ -180,9 +177,7 @@ function updatePageUI(data) {
         confNumberB.innerHTML = ` ${data.referenceNumber}`;
     }
 
-    // ==========================================
     // DETAILS PAGE POPULATION (Smart Base (2).html)
-    // ==========================================
     const headerTitle = document.querySelector('.jss149');
     if (headerTitle) {
         headerTitle.innerText = `אישור כניסה - ${data.id}`;
@@ -202,6 +197,111 @@ function updatePageUI(data) {
     if (baseDiv) {
         baseDiv.innerText = data.baseName;
     }
+}
+
+// Premium iOS-style elastic rubber-band bounce scroll effect for both desktop & mobile
+function enableIOSRubberBandScroll() {
+    const scrollContainer = document.querySelector('.jss17') || document.querySelector('.jss18');
+    if (!scrollContainer) return;
+    
+    // We will apply the transform to the direct child wrapper inside the scroll container
+    const content = scrollContainer.firstElementChild;
+    if (!content) return;
+    
+    content.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+    let isOverscrolling = false;
+    
+    // Touch Events
+    scrollContainer.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].pageY;
+        content.style.transition = 'none'; // Disable transition during drag
+        isDragging = true;
+    }, { passive: true });
+    
+    scrollContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentY = e.touches[0].pageY;
+        let deltaY = currentY - startY;
+        
+        const scrollTop = scrollContainer.scrollTop;
+        const scrollHeight = scrollContainer.scrollHeight;
+        const clientHeight = scrollContainer.clientHeight;
+        const maxScroll = scrollHeight - clientHeight;
+        
+        if (scrollTop === 0 && deltaY > 0) {
+            // Dragging down at top boundary
+            isOverscrolling = true;
+            // Logarithmic spring physics
+            const offset = Math.pow(deltaY, 0.73);
+            content.style.transform = `translateY(${offset}px)`;
+        } else if (scrollTop >= maxScroll - 2 && deltaY < 0) {
+            // Dragging up at bottom boundary
+            isOverscrolling = true;
+            const offset = -Math.pow(-deltaY, 0.73);
+            content.style.transform = `translateY(${offset}px)`;
+        } else {
+            isOverscrolling = false;
+        }
+    }, { passive: true });
+    
+    const endDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        if (isOverscrolling) {
+            content.style.transition = 'transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.22)'; // Spring bounce-back ease
+            content.style.transform = 'translateY(0)';
+            isOverscrolling = false;
+        }
+    };
+    
+    scrollContainer.addEventListener('touchend', endDrag);
+    scrollContainer.addEventListener('touchcancel', endDrag);
+    
+    // Desktop Mouse Drag Events (to support interactive bouncing on PC Chrome/DevTools!)
+    let isMouseDown = false;
+    
+    scrollContainer.addEventListener('mousedown', (e) => {
+        // Do not drag if clicking form controls or modals
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.closest('#sb-modal')) return;
+        isMouseDown = true;
+        startY = e.pageY;
+        content.style.transition = 'none';
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+        if (!isMouseDown) return;
+        currentY = e.pageY;
+        let deltaY = currentY - startY;
+        
+        const scrollTop = scrollContainer.scrollTop;
+        const scrollHeight = scrollContainer.scrollHeight;
+        const clientHeight = scrollContainer.clientHeight;
+        const maxScroll = scrollHeight - clientHeight;
+        
+        if (scrollTop === 0 && deltaY > 0) {
+            isOverscrolling = true;
+            const offset = Math.pow(deltaY, 0.73);
+            content.style.transform = `translateY(${offset}px)`;
+        } else if (scrollTop >= maxScroll - 2 && deltaY < 0) {
+            isOverscrolling = true;
+            const offset = -Math.pow(-deltaY, 0.73);
+            content.style.transform = `translateY(${offset}px)`;
+        }
+    });
+    
+    window.addEventListener('mouseup', () => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        if (isOverscrolling) {
+            content.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2)';
+            content.style.transform = 'translateY(0)';
+            isOverscrolling = false;
+        }
+    });
 }
 
 // Initialize Everything
@@ -240,15 +340,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. Handle first load setup check (pre-populate with FAKE mock data, not real data)
+    // 3. Handle first load setup check
     const savedData = getSavedData();
     if (!savedData) {
-        // First entry: show modal immediately pre-populated with MOCK fake data
         setTimeout(() => {
             openModal(MOCK_DATA);
         }, 300);
     } else {
-        // Subsequent entry: populate directly
         updatePageUI(savedData);
     }
 
@@ -280,12 +378,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Page 2 Back Arrow Handler (completely flat, no transform transitions)
+        // Page 2 Back Arrow Handler (completely flat)
         const backBtn = document.querySelector('[data-testid="arrowRightBack"]');
         if (backBtn) {
             const clickTarget = backBtn.closest('div') || backBtn;
             clickTarget.style.cursor = 'pointer';
-            // Flat hover opacity change
             clickTarget.addEventListener('mouseenter', () => {
                 clickTarget.style.opacity = '0.6';
             });
@@ -295,7 +392,9 @@ document.addEventListener("DOMContentLoaded", () => {
             clickTarget.addEventListener('click', () => {
                 window.location.href = 'index.html';
             });
-            console.log("Attached flat back button navigation.");
         }
+
+        // 5. Initialize the Premium iOS rubber-band bounce scroll effect!
+        enableIOSRubberBandScroll();
     }, 500);
 });
