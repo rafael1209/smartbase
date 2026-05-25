@@ -14,7 +14,7 @@ function formatDateToHebrew(dateStr) {
     return `${day}.${month}.${year}`;
 }
 
-// Default Data Model matching the user's structure
+// Actual Default Original Data Model (Fallback if everything is missing)
 const DEFAULT_DATA = {
     id: "6257383",
     baseName: "563078",
@@ -26,7 +26,19 @@ const DEFAULT_DATA = {
     referenceNumber: "652649"
 };
 
-// Retrieve data from localStorage or fallback to defaults
+// Generic MOCK / Fake Data Model (Shown in the form fields on first load)
+const MOCK_DATA = {
+    id: "1234567",
+    baseName: "100000",
+    visitorId: "999999999",
+    visitorName: "ישראל ישראלי",
+    visitorPhone: "0501234567",
+    startDate: "2026-05-01",
+    endDate: "2028-05-01",
+    referenceNumber: "999999"
+};
+
+// Retrieve data from localStorage or fallback to null (to trigger setup)
 function getSavedData() {
     const saved = localStorage.getItem('smartbase_data');
     if (saved) {
@@ -56,31 +68,31 @@ function injectModal() {
                 <form id="sb-modal-form">
                     <div class="sb-form-group">
                         <label class="sb-form-label">שם מלא (מבקר / יוצר)</label>
-                        <input type="text" id="input-visitorName" class="sb-form-input" required placeholder="לדוגמה: רפאל חסמן">
+                        <input type="text" id="input-visitorName" class="sb-form-input" required placeholder="לדוגמה: ישראל ישראלי">
                     </div>
                     <div class="sb-form-row">
                         <div class="sb-form-group">
                             <label class="sb-form-label">תעודת זהות</label>
-                            <input type="text" id="input-visitorId" class="sb-form-input" required placeholder="לדוגמה: 215555756">
+                            <input type="text" id="input-visitorId" class="sb-form-input" required placeholder="לדוגמה: 999999999">
                         </div>
                         <div class="sb-form-group">
                             <label class="sb-form-label">מספר מחנה / בסיס</label>
-                            <input type="text" id="input-baseName" class="sb-form-input" required placeholder="לדוגמה: 563078">
+                            <input type="text" id="input-baseName" class="sb-form-input" required placeholder="לדוגמה: 100000">
                         </div>
                     </div>
                     <div class="sb-form-row">
                         <div class="sb-form-group">
                             <label class="sb-form-label">מספר פנייה / מזהה</label>
-                            <input type="text" id="input-id" class="sb-form-input" required placeholder="לדוגמה: 6257383">
+                            <input type="text" id="input-id" class="sb-form-input" required placeholder="לדוגמה: 1234567">
                         </div>
                         <div class="sb-form-group">
                             <label class="sb-form-label">קוד אישור</label>
-                            <input type="text" id="input-referenceNumber" class="sb-form-input" required placeholder="לדוגמה: 652649">
+                            <input type="text" id="input-referenceNumber" class="sb-form-input" required placeholder="לדוגמה: 999999">
                         </div>
                     </div>
                     <div class="sb-form-group">
                         <label class="sb-form-label">מספר טלפון</label>
-                        <input type="text" id="input-visitorPhone" class="sb-form-input" required placeholder="לדוגמה: 0545888550">
+                        <input type="text" id="input-visitorPhone" class="sb-form-input" required placeholder="לדוגמה: 0501234567">
                     </div>
                     <div class="sb-form-row">
                         <div class="sb-form-group">
@@ -228,12 +240,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. Handle first load setup check
+    // 3. Handle first load setup check (pre-populate with FAKE mock data, not real data)
     const savedData = getSavedData();
     if (!savedData) {
-        // First entry: show modal immediately
+        // First entry: show modal immediately pre-populated with MOCK fake data
         setTimeout(() => {
-            openModal(DEFAULT_DATA);
+            openModal(MOCK_DATA);
         }, 300);
     } else {
         // Subsequent entry: populate directly
