@@ -204,8 +204,16 @@ function enableIOSRubberBandScroll() {
     const scrollContainer = document.querySelector('.jss17') || document.querySelector('.jss18');
     if (!scrollContainer) return;
     
-    // We will apply the transform to the direct child wrapper inside the scroll container
-    const content = scrollContainer.firstElementChild;
+    // Target ONLY the content body element, keeping header and footer completely static!
+    let content = null;
+    if (document.querySelector('[data-testid="arrowRightBack"]')) {
+        // Page 2: Target the details Card element
+        content = document.querySelector('.MuiCard-root');
+    } else {
+        // Page 1: Target the list content wrapper
+        content = document.querySelector('.jss25') || document.querySelector('.jss43') || document.querySelector('.MuiCard-root');
+    }
+    
     if (!content) return;
     
     content.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -235,7 +243,6 @@ function enableIOSRubberBandScroll() {
         if (scrollTop === 0 && deltaY > 0) {
             // Dragging down at top boundary
             isOverscrolling = true;
-            // Logarithmic spring physics
             const offset = Math.pow(deltaY, 0.73);
             content.style.transform = `translateY(${offset}px)`;
         } else if (scrollTop >= maxScroll - 2 && deltaY < 0) {
