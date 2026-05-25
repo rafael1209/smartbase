@@ -963,7 +963,8 @@
 <meta name="savepage-state" content="Standard Items; Retain cross-origin frames; Merge CSS images; Remove unsaved URLs; Load lazy content - scroll steps = 0.2s; Load lazy images in existing content; Max frame depth = 5; Max resource size = 50MB; Max resource time = 10s;">
 <meta name="savepage-version" content="33.9">
 <meta name="savepage-comments" content="">
-  </head>
+    <link rel="stylesheet" href="./smartbase-style.css">
+</head>
   <body dir="rtl">
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
@@ -972,39 +973,7 @@
   
 
 <script data-savepage-type="" type="text/plain" async="" data-savepage-src="https://www.googletagmanager.com/gtag/js?id=G-0M595MCWGY"></script>
-<!-- Antigravity custom navigation script to go back -->
-<script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      // Find the back button SVG or its wrapping div
-      var backBtn = document.querySelector('[data-testid="arrowRightBack"]');
-      if (backBtn) {
-        // Target the parent div to make the entire header item clickable and easy to touch
-        var clickTarget = backBtn.closest('div') || backBtn;
-        clickTarget.style.cursor = 'pointer';
-        clickTarget.style.transition = 'transform 0.15s ease, opacity 0.15s ease';
-        
-        // Add subtle hover effect
-        clickTarget.addEventListener('mouseenter', function() {
-          clickTarget.style.transform = 'scale(1.15)';
-          clickTarget.style.opacity = '0.8';
-        });
-        clickTarget.addEventListener('mouseleave', function() {
-          clickTarget.style.transform = 'none';
-          clickTarget.style.opacity = '1';
-        });
 
-        // Redirect back on click
-        clickTarget.addEventListener('click', function() {
-          console.log("Back button clicked, returning to index.html...");
-          window.location.href = 'index.html';
-        });
-        console.log("Back navigation handler successfully attached!");
-      } else {
-        console.log("Back button (arrowRightBack) not found.");
-      }
-    }, 500);
-  });
-</script>
 
+  <script src="./smartbase-core.js"></script>
 </body></html>
