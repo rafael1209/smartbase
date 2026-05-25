@@ -3,22 +3,37 @@
    Fixes layout clipping, footer pinning, header anchoring, and card stretching
    ========================================================================== */
 
-/* Fix layout height and prevent background clipping */
-html, body {
+/* Top-level viewport sizing to prevent double scrollbars and viewport glitches */
+html, body, #root, .App {
   margin: 0 !important;
   padding: 0 !important;
-  min-height: 100% !important;
+  min-height: 100vh !important;
   height: 100% !important;
   background-color: #f4f4f5 !important;
   font-family: 'Heebo', 'Rubik', Roboto, sans-serif !important;
-  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important; /* Lock the outer viewport scroll */
 }
 
-#root, .App, .jss17, .jss18, .jss23, .jss28, .jss134, .jss139 {
-  min-height: 100vh !important;
-  height: auto !important;
+/* Universal page scroll container (the only element allowed to scroll if content overflows) */
+.jss17, .jss18 {
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow-y: auto !important; 
+  background-color: #f4f4f5 !important;
   display: flex !important;
   flex-direction: column !important;
+  box-sizing: border-box !important;
+  padding-bottom: 0 !important;
+}
+
+/* Inner layout wrappers - stretch dynamically using flex-grow without forcing 100vh */
+.jss23, .jss28, .jss134, .jss139 {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+  height: auto !important;
+  min-height: auto !important;
   background-color: #f4f4f5 !important;
   box-sizing: border-box !important;
 }
@@ -43,11 +58,6 @@ html, body {
   flex-grow: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
-}
-
-/* Universal layout wrappers - reset bottom padding to prevent page 2 from scrolling */
-.jss17, .jss18 {
-  padding-bottom: 0 !important;
 }
 
 /* Add padding ONLY to the index page wrappers to make room for fixed bottom footer tabs (since page 2 has no footer tabs!) */
