@@ -45,14 +45,14 @@ html, body {
   margin: 0 !important;
 }
 
-/* Add padding to the parent page wrappers to make room for fixed bottom footer tabs */
-.jss23, .jss28, .jss134, .jss139 {
-  padding-bottom: 90px !important; /* Spacing between page content bottom and fixed tabs */
+/* Add padding ONLY to the universal page scroll wrapper to make room for fixed bottom footer tabs */
+.jss17, .jss18 {
+  padding-bottom: 95px !important; /* Perfect gap above fixed tabs */
   box-sizing: border-box !important;
 }
 
-/* Reset any padding-bottom overrides on the cards to prevent them from stretching down */
-.MuiCard-root.muirtl-s18byi {
+/* Reset all padding-bottom overrides on the cards to prevent them from stretching down */
+.MuiCard-root {
   padding-bottom: unset !important;
   flex-grow: 0 !important;
   margin-bottom: 16px !important;
