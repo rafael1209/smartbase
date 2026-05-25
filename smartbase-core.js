@@ -201,8 +201,10 @@ function updatePageUI(data) {
 
 // Dynamically wraps all page content elements (below header and spacer) in a single container
 function wrapContentBody() {
-    // Find the header spacer (.jss34 on page 1, .jss146 on page 2)
-    const spacer = document.querySelector('.jss34') || document.querySelector('.jss146');
+    // Only wrap on page 2 (Smart Base (2).html) where we have multiple sibling cards below header
+    if (!document.querySelector('[data-testid="arrowRightBack"]')) return;
+    
+    const spacer = document.querySelector('.jss146');
     if (!spacer) return;
     
     if (document.querySelector('.sb-scroll-body')) return;
@@ -235,8 +237,16 @@ function enableIOSRubberBandScroll() {
     const scrollContainer = document.querySelector('.App > div') || document.querySelector('.jss17') || document.querySelector('.jss18');
     if (!scrollContainer) return;
     
-    // Target the newly created .sb-scroll-body wrapper to move ALL content elements together!
-    const content = document.querySelector('.sb-scroll-body');
+    // Target the appropriate body container:
+    let content = null;
+    if (document.querySelector('[data-testid="arrowRightBack"]')) {
+        // Page 2: Target the newly wrapped content body container
+        content = document.querySelector('.sb-scroll-body');
+    } else {
+        // Page 1: Target the natural cards list content wrapper (no wrapping needed!)
+        content = document.querySelector('.jss25') || document.querySelector('.jss43') || document.querySelector('.MuiCard-root');
+    }
+    
     if (!content) return;
     
     content.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -339,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. Inject custom modal
     injectModal();
 
-    // 2. Wrap all content elements dynamically below the header/spacer
+    // 2. Wrap page 2 content elements dynamically below the header/spacer (ignores page 1!)
     wrapContentBody();
 
     // 3. Attach listeners
