@@ -1,6 +1,6 @@
 /* ==========================================================================
    Smart Base Premium Custom Stylesheet
-   Fixes layout clipping, footer pinning, header anchoring, and top-spacing issues
+   Fixes layout clipping, footer pinning, header anchoring, and card stretching
    ========================================================================== */
 
 /* Fix layout height and prevent background clipping */
@@ -45,10 +45,17 @@ html, body {
   margin: 0 !important;
 }
 
-/* Content wrappers padding to make room for bottom footer tabs */
-.jss25, .jss43, .MuiCard-root.muirtl-s18byi {
-  padding-bottom: 100px !important; /* Leave room for fixed footer */
-  flex-grow: 1 !important;
+/* Add padding to the parent page wrappers to make room for fixed bottom footer tabs */
+.jss23, .jss28, .jss134, .jss139 {
+  padding-bottom: 90px !important; /* Spacing between page content bottom and fixed tabs */
+  box-sizing: border-box !important;
+}
+
+/* Reset any padding-bottom overrides on the cards to prevent them from stretching down */
+.MuiCard-root.muirtl-s18byi {
+  padding-bottom: unset !important;
+  flex-grow: 0 !important;
+  margin-bottom: 16px !important;
 }
 
 /* Fixed Pin Footer Tabs at the bottom of screen */
