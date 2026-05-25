@@ -201,7 +201,8 @@ function updatePageUI(data) {
 
 // Premium iOS-style elastic rubber-band bounce scroll effect for both desktop & mobile
 function enableIOSRubberBandScroll() {
-    const scrollContainer = document.querySelector('.jss17') || document.querySelector('.jss18');
+    // Select the scroll container universally (.App > div) which exists on both pages!
+    const scrollContainer = document.querySelector('.App > div') || document.querySelector('.jss17') || document.querySelector('.jss18');
     if (!scrollContainer) return;
     
     // Target ONLY the content body element, keeping header and footer completely static!

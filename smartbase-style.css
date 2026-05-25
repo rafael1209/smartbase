@@ -1,7 +1,7 @@
 /* ==========================================================================
    Smart Base Premium Custom Stylesheet
    Fixes layout clipping, footer pinning, header anchoring, and card stretching
-   ========================================================================= */
+   ========================================================================== */
 
 /* Top-level viewport sizing to prevent double scrollbars and viewport glitches */
 html, body, #root, .App {
@@ -15,8 +15,8 @@ html, body, #root, .App {
   overflow: hidden !important; /* Lock the outer viewport scroll */
 }
 
-/* Universal page scroll container (handles native elastic/bounce scrolling) */
-.jss17, .jss18 {
+/* Universal page scroll container (the direct div inside .App handles scroll and elastic effects) */
+.App > div {
   height: 100% !important;
   min-height: 100% !important;
   overflow-y: auto !important; 
