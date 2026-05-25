@@ -1,7 +1,7 @@
 /* ==========================================================================
    Smart Base Core Logic (smartbase-core.js)
    Handles state management (LocalStorage), dynamic UI updates, profile edit modal,
-   and custom iOS rubber-band elastic scroll bounce effect
+   DOM content wrapping, and iOS rubber-band elastic scroll bounce effect
    ========================================================================== */
 
 // Helper to format Date YYYY-MM-DD into DD.MM.YY Hebrew format
@@ -199,22 +199,44 @@ function updatePageUI(data) {
     }
 }
 
+// Dynamically wraps all page content elements (below header and spacer) in a single container
+function wrapContentBody() {
+    // Find the header spacer (.jss34 on page 1, .jss146 on page 2)
+    const spacer = document.querySelector('.jss34') || document.querySelector('.jss146');
+    if (!spacer) return;
+    
+    if (document.querySelector('.sb-scroll-body')) return;
+    
+    // Create the premium content container wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sb-scroll-body';
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.flexGrow = '1';
+    wrapper.style.width = '100%';
+    
+    // Move all sibling nodes after the spacer into the wrapper container
+    const parent = spacer.parentNode;
+    let nextNode = spacer.nextSibling;
+    while (nextNode) {
+        const toMove = nextNode;
+        nextNode = nextNode.nextSibling;
+        wrapper.appendChild(toMove);
+    }
+    
+    // Reinsert the wrapper directly after the header spacer
+    parent.appendChild(wrapper);
+    console.log("Successfully wrapped all content elements into .sb-scroll-body!");
+}
+
 // Premium iOS-style elastic rubber-band bounce scroll effect for both desktop & mobile
 function enableIOSRubberBandScroll() {
-    // Select the scroll container universally (.App > div) which exists on both pages!
+    // Select the scroll container universally (.App > div)
     const scrollContainer = document.querySelector('.App > div') || document.querySelector('.jss17') || document.querySelector('.jss18');
     if (!scrollContainer) return;
     
-    // Target ONLY the content body element, keeping header and footer completely static!
-    let content = null;
-    if (document.querySelector('[data-testid="arrowRightBack"]')) {
-        // Page 2: Target the details Card element
-        content = document.querySelector('.MuiCard-root');
-    } else {
-        // Page 1: Target the list content wrapper
-        content = document.querySelector('.jss25') || document.querySelector('.jss43') || document.querySelector('.MuiCard-root');
-    }
-    
+    // Target the newly created .sb-scroll-body wrapper to move ALL content elements together!
+    const content = document.querySelector('.sb-scroll-body');
     if (!content) return;
     
     content.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -317,7 +339,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. Inject custom modal
     injectModal();
 
-    // 2. Attach listeners
+    // 2. Wrap all content elements dynamically below the header/spacer
+    wrapContentBody();
+
+    // 3. Attach listeners
     const modalForm = document.getElementById('sb-modal-form');
     if (modalForm) {
         modalForm.addEventListener('submit', (e) => {
@@ -348,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. Handle first load setup check
+    // 4. Handle first load setup check
     const savedData = getSavedData();
     if (!savedData) {
         setTimeout(() => {
@@ -358,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updatePageUI(savedData);
     }
 
-    // 4. Hook the "Profile" tab to open the editor
+    // 5. Hook the "Profile" tab to open the editor
     setTimeout(() => {
         const profileTab = document.getElementById('profile_tab');
         if (profileTab) {
@@ -402,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // 5. Initialize the Premium iOS rubber-band bounce scroll effect!
+        // 6. Initialize the Premium iOS rubber-band bounce scroll effect!
         enableIOSRubberBandScroll();
     }, 500);
 });
